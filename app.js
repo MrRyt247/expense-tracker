@@ -4,7 +4,10 @@ const errorHandler = require("./handlers/errorHandler");
 require("dotenv").config();
 const app = express();
 
+// const userRoutes = require("./modules/users/user.routes");
+
 const mongoose = require("mongoose");
+const userRoutes = require("./modules/users/user.routes");
 
 // connections
 mongoose
@@ -16,10 +19,13 @@ mongoose
     console.log("DB connection Failed");
   });
 
-app.use(express.json());
-
 // Model intialization
 require("./models/usersModel");
+app.use(express.json());
+
+// Routes
+
+app.use("/users", userRoutes);
 
 // End of Routes
 app.use(errorHandler);
