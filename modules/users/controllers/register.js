@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const jwtManager = require("../../../managers/jwtManager");
 
 const register = async (req, res) => {
   const usersModel = mongoose.model("users");
@@ -40,9 +41,12 @@ const register = async (req, res) => {
     password: hashedPassword,
     balance: balance,
   });
-  console.log(user);
+
+  const accessToken = jwtManager(user);
+
   res.status(201).json({
     status: "User created successfully",
+    accessToken: accessToken,
   });
 };
 
