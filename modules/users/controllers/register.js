@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const register = async (req, res) => {
   const usersModel = mongoose.model("users");
 
-  const { name, email, password, confirmPassword, balance } = req;
+  const { name, email, password, confirmPassword, balance } = req.body;
 
   // validations
   if (!name) throw "Name must be provided!";
