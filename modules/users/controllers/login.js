@@ -5,19 +5,19 @@ const jwt = require("jsonwebtoken");
 const login = async (req, res) => {
   const userModel = mongoose.model("users");
 
-  const { email, password } = req;
+  const { email, password } = req.body;
 
-  const getUser = await userModel.findOne({
+  const user = await userModel.findOne({
     email: email,
   });
 
-  if (!getUser) throw "This email does not exist";
+  if (!user) throw "This email does not exist";
 
-  const comparePassword = await bcrypt.compare(password, getUser.password);
+  const comparePassword = await bcrypt.compare(password, user.password);
   if (!comparePassword) throw "Password is incorrect!";
 
   const accessToken = await jwt.sign(
-    { _id: getUser._id, name: getUser.name },
+    { _id: user._id, lastname: user.lastname },
     process.env.JWT_KEY
   );
 

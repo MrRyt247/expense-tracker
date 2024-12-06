@@ -4,10 +4,19 @@ const bcrypt = require("bcrypt");
 const register = async (req, res) => {
   const usersModel = mongoose.model("users");
 
-  const { name, email, password, confirmPassword, balance } = req.body;
+  const {
+    firstname,
+    middlename,
+    lastname,
+    email,
+    password,
+    confirmPassword,
+    balance,
+  } = req.body;
 
   // validations
-  if (!name) throw "Name must be provided!";
+  if (!firstname) throw "First name must be provided!";
+  if (!lastname) throw "Last name must be provided!";
   if (!email) throw "Email must be provided!";
   if (!password) throw "Password must be provided!";
   if (password < 8 && password > 20)
@@ -24,7 +33,9 @@ const register = async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 12);
 
   const user = await usersModel.create({
-    name: name,
+    firstname: firstname,
+    middlename: middlename,
+    lastname: lastname,
     email: email,
     password: hashedPassword,
     balance: balance,
