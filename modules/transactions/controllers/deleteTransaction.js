@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 
-const addIncome = async (req, res) => {
+const deleteTransaction = async (req, res) => {
   const usersModel = mongoose.model("users");
   const transactionsModel = mongoose.model("transactions");
 
-  const { amount, reference } = req.body;
+  const { id } = req.param;
+
   // validations
   if (!amount) throw "Amount must be provided!";
   if (!validator.isNumeric(amount.toString()))
@@ -27,7 +28,7 @@ const addIncome = async (req, res) => {
     },
     {
       $inc: {
-        balance: amount,
+        balance: amount * -1,
       },
     },
     {
@@ -36,11 +37,11 @@ const addIncome = async (req, res) => {
   );
 
   console.log(transaction, req.user._id);
-  res.status(201).json({
+  res.status(200).json({
     status: "Success",
-    message: "Income added successfully",
+    message: "Income deleted successfully",
     data: transaction,
   });
 };
 
-module.exports = addIncome;
+module.exports = deleteTransaction;

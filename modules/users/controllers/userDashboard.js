@@ -10,7 +10,8 @@ const userDashboard = async (req, res) => {
     .select("-password");
 
   res.status(200).json({
-    status: "Welcome to User Dashboard",
+    status: "Success",
+    message: "Welcome to User Dashboard",
     data: user,
   });
 };

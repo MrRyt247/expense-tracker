@@ -32,7 +32,7 @@ app.get("/", (req, res) => {
   });
 });
 app.use("/users", userRoutes);
-app.use("transactions", transactionRoutes);
+app.use("/transactions", transactionRoutes);
 
 // End of Routes
 app.use(errorHandler);
