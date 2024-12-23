@@ -5,42 +5,58 @@ const deleteTransaction = async (req, res) => {
   const usersModel = mongoose.model("users");
   const transactionsModel = mongoose.model("transactions");
 
-  const { id } = req.param;
+  //   const { id } = req.params;
+  //   console.log(id, req.params);
 
   // validations
-  if (!amount) throw "Amount must be provided!";
-  if (!validator.isNumeric(amount.toString()))
-    throw "Amount must be a valid number";
-  if (!reference) throw "reference  must be provided!";
-  if (reference.length < 0 && password.length > 100)
-    throw "Reference must be less than 100 characters long!";
+  if (!validator.isMongoId(req.params.id.toString()))
+    throw "Provide a valid id!";
 
-  const transaction = await transactionsModel.create({
-    userId: req.userId,
-    amount,
-    type: "income",
-    reference,
+  const transaction = await transactionsModel.findOne({
+    _id: req.params.id,
   });
 
-  await usersModel.updateOne(
-    {
-      _id: req.user._id,
-    },
-    {
-      $inc: {
-        balance: amount * -1,
+  if (!transaction) throw "Transaction not found!";
+
+  if (transaction.type === "income") {
+    await usersModel.updateOne(
+      {
+        _id: req.user._id,
       },
-    },
-    {
-      runValidators: true,
-    }
-  );
+      {
+        $inc: {
+          balance: transaction.amount * -1,
+        },
+      },
+      {
+        runValidators: true,
+      }
+    );
+  } else {
+    await usersModel.updateOne(
+      {
+        _id: req.user._id,
+      },
+      {
+        $inc: {
+          balance: transaction.amount,
+        },
+      },
+      {
+        runValidators: true,
+      }
+    );
+  }
+
+  const dtransaction = await transactionsModel.deleteOne({
+    _id: req.params.id,
+  });
 
   console.log(transaction, req.user._id);
   res.status(200).json({
     status: "Success",
     message: "Income deleted successfully",
-    data: transaction,
+    data: [transaction, dtransaction],
   });
 };
 
