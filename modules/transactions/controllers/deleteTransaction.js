@@ -5,14 +5,10 @@ const deleteTransaction = async (req, res) => {
   const usersModel = mongoose.model("users");
   const transactionsModel = mongoose.model("transactions");
 
-  //   const { id } = req.params;
-  //   console.log(id, req.params);
-
-  // validations
   if (!validator.isMongoId(req.params.id.toString()))
     throw "Provide a valid id!";
 
-  const transaction = await transactionsModel.findOne({
+  const transaction = await transactionsModel.deleteOne({
     _id: req.params.id,
   });
 
@@ -48,7 +44,7 @@ const deleteTransaction = async (req, res) => {
     );
   }
 
-  const dtransaction = await transactionsModel.deleteOne({
+  await transactionsModel.deleteOne({
     _id: req.params.id,
   });
 
