@@ -7,6 +7,7 @@ const app = express();
 
 const mongoose = require("mongoose");
 const userRoutes = require("./modules/users/user.routes");
+const transactionRoutes = require("./modules/transactions/transactions.routes");
 
 // connections
 mongoose
@@ -20,6 +21,7 @@ mongoose
 
 // Model intialization
 require("./models/usersModel");
+require("./models/transactionsModel");
 
 app.use(express.json());
 
@@ -30,6 +32,7 @@ app.get("/", (req, res) => {
   });
 });
 app.use("/users", userRoutes);
+app.use("transactions", transactionRoutes);
 
 // End of Routes
 app.use(errorHandler);

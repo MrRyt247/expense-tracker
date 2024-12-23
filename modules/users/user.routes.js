@@ -16,6 +16,8 @@ userRoutes.post("/register", register);
 userRoutes.post("/login", login);
 
 userRoutes.use(auth);
+
+// Protected Routes
 userRoutes.get("/dashboard", userDashboard);
 
 module.exports = userRoutes;
