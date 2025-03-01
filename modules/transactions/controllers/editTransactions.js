@@ -1,11 +1,16 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 
-const deleteTransaction = async (req, res) => {
+const editTransaction = async (req, res) => {
   const usersModel = mongoose.model("users");
   const transactionsModel = mongoose.model("transactions");
 
-  if (!validator.isMongoId(req.params.id.toString()))
+  const { transaction_id, amount, type, reference } = req.body;
+
+  if (!transaction_id) throw "Transaction id is required!";
+  if (type !== "income" || type !== "expense")
+    throw "Transaction type ,ust be an income or an expense!";
+  if (!validator.isMongoId(transaction_id.toString()))
     throw "Provide a valid id!";
 
   const transaction = await transactionsModel.deleteOne({
@@ -14,7 +19,21 @@ const deleteTransaction = async (req, res) => {
 
   if (!transaction) throw "Transaction not found!";
 
-  if (transaction.type === "income") {
+  const updatedTransaction = await transactionsModel.updateOne(
+    {
+      _id: transaction_id,
+    },
+    {
+      amount,
+      type,
+      reference,
+    },
+    {
+      runValidators: true,
+    }
+  );
+
+  if (type === "income") {
     await usersModel.updateOne(
       {
         _id: req.user._id,
@@ -44,15 +63,11 @@ const deleteTransaction = async (req, res) => {
     );
   }
 
-  await transactionsModel.deleteOne({
-    _id: req.params.id,
-  });
-
   res.status(200).json({
     status: "Success",
-    message: "Income deleted successfully",
-    data: [transaction, dtransaction],
+    message: "Transaction Updated!",
+    data: updatedTransaction,
   });
 };
 
-module.exports = deleteTransaction;
+module.exports = editTransaction;
